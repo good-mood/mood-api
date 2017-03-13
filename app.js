@@ -16,7 +16,7 @@ var express = require('express');
 var cfenv = require('cfenv');
 
 // get the app environment from Cloud Foundry
-var appEnv = cfenv.getAppEnv();
+var appenv = cfenv.getAppEnv();
 
 var	bodyParser = require('body-parser'),
 	oauthserver = require('oauth2-server'),
@@ -35,14 +35,51 @@ var	clientModel = require('./mongo/model/client'),
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var	mongoUri = 'mongodb://localhost/mood';
+//var	mongoUri = 'mongodb://localhost/mood';
 
-mongoose.connect(mongoUri, function(err, res) {
-	if (err) {
-		return console.error('Error connecting to "%s":', mongoUri, err);
-	}
-	console.log('Connected successfully to "%s"', mongoUri);
-});
+//mongoose.connect(mongoUri, function(err, res) {
+//	if (err) {
+//		return console.error('Error connecting to "%s":', mongoUri, err);
+//	}
+//	console.log('Connected successfully to "%s"', mongoUri);
+//});
+
+var services = appenv.services;
+var MongoClient = require("mongodb").MongoClient;
+var mongodb_services = services["compose-for-mongodb"];
+var credentials = mongodb_services[0].credentials;
+var ca = [new Buffer(credentials.ca_certificate_base64, 'base64')];
+var mongodb;
+
+MongoClient.connect(credentials.uri, {
+        mongos: {
+            ssl: true,
+            sslValidate: true,
+            sslCA: ca,
+            poolSize: 1,
+            reconnectTries: 1
+        }
+    },
+    function(err, db) {
+        if (err) {
+            console.log(err);
+        } else {
+            mongodb = db.db("examples");
+        }
+    }
+);
+
+var mongoDbOptions = {
+        mongos: {
+            ssl: true,
+            sslValidate: true,
+            sslCA: ca,
+            poolSize: 1,
+            reconnectTries: 1
+        }
+};
+
+var mongooseClient = mongoose.connect(credentials.uri, mongoDbOptions);
 
 app.oauth = oauthserver({
 	model: require('./model.js'),
@@ -605,7 +642,7 @@ app.use(function (err, req, res, next) {
 app.use(app.oauth.errorHandler());
 
 // start server on the specified port and binding host
-app.listen(appEnv.port, '0.0.0.0', function() {
+app.listen(appenv.port, '0.0.0.0', function() {
   // print a message when the server starts listening
-  console.log("server starting on " + appEnv.url);
+  console.log("server starting on " + appenv.url);
 });
