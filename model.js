@@ -7,8 +7,8 @@ var	mongoose = require('mongoose'),
 var	clientModel = require('./mongo/model/client'),
 	tokenModel = require('./mongo/model/token'),
 	userModel = require('./mongo/model/user'),
-	readingModel = require('./mongo/model/reading');
-	groupModel = require('./mongo/model/group');
+	readingModel = require('./mongo/model/reading'),
+	groupModel = require('./mongo/model/group'),
 	practiceModel = require('./mongo/model/practice');
 
 /**
