@@ -47,8 +47,9 @@ var loadExampleUser = function() {
 	var user = new User({
 		id: new mongoose.mongo.ObjectID(),
 		created_time: moment.now(),
-		username: 'vladi',
+		username: 'arto',
 		password: 'salasana',
+		admin: true
 	});
 
 	user.save(function(err, user) {
