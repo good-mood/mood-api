@@ -60,4 +60,4 @@ var loadExampleUser = function() {
 	});
 };
 
-//loadExampleUser();
+loadExampleUser();
