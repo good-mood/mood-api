@@ -158,4 +158,4 @@ module.exports = {
 	getUser: getUser
 };
 
-loadExampleClient();
+//loadExampleClient();
