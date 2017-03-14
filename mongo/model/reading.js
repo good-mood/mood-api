@@ -14,6 +14,7 @@ module.exports.createReadings = function (callback, id, readings) {
 			readings[item].id = id;
 		}
 	}
+	
 	Reading.create(readings, callback);
 };
 

@@ -7,6 +7,11 @@ var	mongoose = require('mongoose'),
 
 var User = module.exports = modelInstance;
 
+var options = {
+		safe: true,
+		w: 'majority'
+};
+
 module.exports.createUser = function(callback, user) {
 	user.id = new mongoose.mongo.ObjectID();
 	user.created_time = moment.now();
@@ -33,11 +38,12 @@ module.exports.updateUser = function(callback, id, user) {
 	delete user.__v;
 	delete user._id;
 	user.updated_time = moment.now();
-	User.findOneAndUpdate({id: id}, user, callback);
+	
+	User.findOneAndUpdate({id: id}, user, options, callback);
 };
 
 module.exports.removeUser = function(callback, id) {
-	User.findOneAndRemove({id: id}, callback);
+	User.findOneAndRemove({id: id}, options, callback);
 };
 
 //For debug

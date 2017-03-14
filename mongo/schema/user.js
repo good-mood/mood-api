@@ -1,3 +1,5 @@
+var safe = { w: "majority", wtimeout: 10000 };
+
 module.exports = {
 	created_time: { type: Date, default: Date.now },
 	email: { type: String },
@@ -8,4 +10,4 @@ module.exports = {
 	username: { type: String, required: true },
 	password: { type: String, required: true },
 	admin: { type: Boolean, default: false}
-};
+}, { safe: safe };

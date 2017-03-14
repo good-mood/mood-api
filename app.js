@@ -1,25 +1,13 @@
-/*eslint-env node*/
-
 //------------------------------------------------------------------------------
-// node.js starter application for Bluemix
+// Mood API
 //------------------------------------------------------------------------------
 
-// This application uses express as its web server
-// for more info, see: http://expressjs.com
-var express = require('express');
-
-// serve the files out of ./public as our main files
-//app.use(express.static(__dirname + '/public'));
-
-var	bodyParser = require('body-parser'),
+var express = require('express'),
+	bodyParser = require('body-parser'),
 	oauthserver = require('oauth2-server'),
 	mongoose = require('mongoose'),
-	moment = require('moment');
-	
-const util = require('util');
-const assert = require('assert');
-
-var	app = express();
+	moment = require('moment'),
+	cfenv = require('cfenv');
 
 var	clientModel = require('./mongo/model/client'),
 	tokenModel = require('./mongo/model/token'),
@@ -28,20 +16,14 @@ var	clientModel = require('./mongo/model/client'),
 	groupModel = require('./mongo/model/group'),
 	practiceModel = require('./mongo/model/practice');
 
+var	app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-//var	mongoUri = 'mongodb://localhost/mood';
+const util = require('util');
+const assert = require('assert');
 
-//mongoose.connect(mongoUri, function(err, res) {
-//	if (err) {
-//		return console.error('Error connecting to "%s":', mongoUri, err);
-//	}
-//	console.log('Connected successfully to "%s"', mongoUri);
-//});
-
-var MongoClient = require("mongodb").MongoClient;
-var cfenv = require('cfenv');
+var MongoClient = require('mongodb').MongoClient;
 var appenv = cfenv.getAppEnv();
 var services = appenv.services;
 var mongodb_services = services["compose-for-mongodb"];
@@ -50,36 +32,43 @@ var credentials = mongodb_services[0].credentials;
 var ca = [new Buffer(credentials.ca_certificate_base64, 'base64')];
 var mongodb;
 
-MongoClient.connect(credentials.uri, {
-        mongos: {
-            ssl: true,
-            sslValidate: true,
-            sslCA: ca,
-            poolSize: 1,
-            reconnectTries: 1
-        }
-    },
-    function(err, db) {
-		assert.equal(null, err); //Added
-        if (err) {
-            console.log(err);
-        } else {
-            mongodb = db.db("examples");
-        }
-    }
+
+MongoClient.connect("mongodb://admin:UFAPABGBLZRJXKKA@sl-us-dal-9-portal.5.dblayer.com:21245", {
+		mongos: {
+			ssl: true,
+			sslValidate: true,
+			sslCA: ca,
+			poolSize: 1,
+			reconnectTries: 1
+		}
+	},
+	function(err, db) {
+		if (err) {
+			console.log(err);
+		} else {
+			mongodb = db.db("examples");
+		}
+	}
 );
 
+
 var mongoDbOptions = {
-        mongos: {
-            ssl: true,
-            sslValidate: true,
-            sslCA: ca,
-            poolSize: 1,
-            reconnectTries: 1
-        }
+	mongos: {
+		ssl: true,
+		sslValidate: true,
+		sslCA: ca,
+		poolSize: 1,
+		reconnectTries: 1,
+	}
 };
 
-var mongooseClient = mongoose.connect(credentials.uri, mongoDbOptions);
+//Debug
+console.log('mongodb_services:' + JSON.stringify(mongodb_services));
+console.log('credentials:' + JSON.stringify(credentials));
+console.log('ca:' + ca);
+console.log('mongoDbOptions:' + JSON.stringify(mongoDbOptions));
+
+var mongooseClient = mongoose.connect("mongodb://admin:UFAPABGBLZRJXKKA@sl-us-dal-9-portal.5.dblayer.com:21245", mongoDbOptions);
 
 app.oauth = oauthserver({
 	model: require('./model.js'),
