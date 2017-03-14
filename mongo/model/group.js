@@ -7,6 +7,11 @@ var	mongoose = require('mongoose'),
 
 var Group = module.exports = modelInstance;
 
+var options = {
+	safe: true,
+	w: 'majority'
+};
+
 module.exports.createGroup = function(callback, group) {
 	group.id = new mongoose.mongo.ObjectID();
 	group.created_time = moment.now();
@@ -29,9 +34,9 @@ module.exports.updateGroup = function(callback, id, group) {
 	delete group.__v;
 	delete group._id;
 	group.updated_time = moment.now();
-	Group.findOneAndUpdate({id: id}, group, callback);
+	Group.findOneAndUpdate({id: id}, group, options, callback);
 };
 
 module.exports.removeGroup = function(callback, id) {
-	Group.findOneAndRemove({id: id}, callback);
+	Group.findOneAndRemove({id: id}, options, callback);
 };

@@ -8,8 +8,8 @@ var	mongoose = require('mongoose'),
 var User = module.exports = modelInstance;
 
 var options = {
-		safe: true,
-		w: 'majority'
+	safe: true,
+	w: 'majority'
 };
 
 module.exports.createUser = function(callback, user) {

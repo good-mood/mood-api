@@ -62,12 +62,6 @@ var mongoDbOptions = {
 	}
 };
 
-//Debug
-console.log('mongodb_services:' + JSON.stringify(mongodb_services));
-console.log('credentials:' + JSON.stringify(credentials));
-console.log('ca:' + ca);
-console.log('mongoDbOptions:' + JSON.stringify(mongoDbOptions));
-
 var mongooseClient = mongoose.connect("mongodb://admin:UFAPABGBLZRJXKKA@sl-us-dal-9-portal.5.dblayer.com:21245", mongoDbOptions);
 
 app.oauth = oauthserver({
@@ -296,7 +290,7 @@ app.delete('/api/users/:id', app.oauth.authorise(), function (req, res) {
 			if (!user) {
 				res.status(500).send({success: false, message: 'Internal Server Error. UserID not found.'});
 			} else {
-				res.status(204).json({success: true, message: 'User ' + user.username + ' deleted.'});
+				res.status(204).send({success: true, message: 'User ' + user.username + ' deleted.'});
 			}
 		}, req.params.id);
 	});
