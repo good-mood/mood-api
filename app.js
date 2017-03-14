@@ -517,7 +517,7 @@ app.delete('/api/groups/:id', app.oauth.authorise(), function (req, res) {
 				if (!group) {
 					res.status(404).send({success: false, message: 'GroupID not found.'});
 				} else {
-					res.status(204).json({success: true, message: 'Group ' + group.groupname + ' deleted.'});
+					res.status(200).json({success: true, message: 'Group ' + group.groupname + ' deleted.'});
 				}
 			}, req.params.id);
 		}
