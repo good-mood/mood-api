@@ -11,18 +11,13 @@ var express = require('express');
 // serve the files out of ./public as our main files
 //app.use(express.static(__dirname + '/public'));
 
-// cfenv provides access to your Cloud Foundry environment
-// for more info, see: https://www.npmjs.com/package/cfenv
-var cfenv = require('cfenv');
-
-// get the app environment from Cloud Foundry
-var appenv = cfenv.getAppEnv();
-
 var	bodyParser = require('body-parser'),
 	oauthserver = require('oauth2-server'),
 	mongoose = require('mongoose'),
-	moment = require('moment'),
-	assert = require('assert');
+	moment = require('moment');
+	
+const util = require('util');
+const assert = require('assert');
 
 var	app = express();
 
@@ -45,9 +40,12 @@ app.use(bodyParser.json());
 //	console.log('Connected successfully to "%s"', mongoUri);
 //});
 
-var services = appenv.services;
 var MongoClient = require("mongodb").MongoClient;
+var cfenv = require('cfenv');
+var appenv = cfenv.getAppEnv();
+var services = appenv.services;
 var mongodb_services = services["compose-for-mongodb"];
+assert(!util.isUndefined(mongodb_services), "Must be bound to compose-for-mongodb services");
 var credentials = mongodb_services[0].credentials;
 var ca = [new Buffer(credentials.ca_certificate_base64, 'base64')];
 var mongodb;
@@ -62,6 +60,7 @@ MongoClient.connect(credentials.uri, {
         }
     },
     function(err, db) {
+		assert.equal(null, err); //Added
         if (err) {
             console.log(err);
         } else {
@@ -80,32 +79,7 @@ var mongoDbOptions = {
         }
 };
 
-mongoose.connection.on('error',function (err) {
-  console.log('Mongoose default connection error: ' + err);
-});
-
-mongoose.connection.on('open', function (err) {
-    assert.equal(null, err);
-    mongoose.connection.db.listCollections().toArray(function(err, collections) {
-        assert.equal(null, err);
-        collections.forEach(function(collection) {
-            console.log(collection);
-        });
-        mongoose.connection.db.close();
-        process.exit(0);
-    });
-});
-
-mongoose.connect(credentials.uri, mongoDbOptions);
-
-//mongoose.connect(credentials.uri, mongoDbOptions, function(err, res) {
-//	if (err) {
-//		return console.error('Error connecting to "%s":', credentials.uri, err);
-//	}
-//	console.log('Connected successfully to "%s"', credentials.uri);
-//});
-
-//var mongooseClient = mongoose.connect(credentials.uri, mongoDbOptions);
+var mongooseClient = mongoose.connect(credentials.uri, mongoDbOptions);
 
 app.oauth = oauthserver({
 	model: require('./model.js'),

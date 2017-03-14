@@ -8,12 +8,13 @@
 	"dependencies": {
 		"express": "4.13.x",
 		"cfenv": "1.0.x",
-		"body-parser": "^1.15.2",
+		"body-parser": "^1.17.1",
 		"moment": "^2.17.1",
-		"mongoose": "^4.7.1",
+		"mongoose": "^4.8.7",
 		"oauth2-server": "^2.4.1",
 		"mongodb": "^2.2.9",
-		"assert":"*"
+		"assert":"^1.4.1",
+		"util":"^0.10.3"
 	},
 	"repository": {},
 	"engines": {
