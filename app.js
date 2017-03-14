@@ -21,7 +21,8 @@ var appenv = cfenv.getAppEnv();
 var	bodyParser = require('body-parser'),
 	oauthserver = require('oauth2-server'),
 	mongoose = require('mongoose'),
-	moment = require('moment');
+	moment = require('moment'),
+	assert = require('assert');
 
 var	app = express();
 
@@ -79,7 +80,32 @@ var mongoDbOptions = {
         }
 };
 
-var mongooseClient = mongoose.connect(credentials.uri, mongoDbOptions);
+mongoose.connection.on('error',function (err) {
+  console.log('Mongoose default connection error: ' + err);
+});
+
+mongoose.connection.on('open', function (err) {
+    assert.equal(null, err);
+    mongoose.connection.db.listCollections().toArray(function(err, collections) {
+        assert.equal(null, err);
+        collections.forEach(function(collection) {
+            console.log(collection);
+        });
+        mongoose.connection.db.close();
+        process.exit(0);
+    });
+});
+
+mongoose.connect(credentials.uri, mongoDbOptions);
+
+//mongoose.connect(credentials.uri, mongoDbOptions, function(err, res) {
+//	if (err) {
+//		return console.error('Error connecting to "%s":', credentials.uri, err);
+//	}
+//	console.log('Connected successfully to "%s"', credentials.uri);
+//});
+
+//var mongooseClient = mongoose.connect(credentials.uri, mongoDbOptions);
 
 app.oauth = oauthserver({
 	model: require('./model.js'),
