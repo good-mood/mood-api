@@ -32,8 +32,8 @@ var credentials = mongodb_services[0].credentials;
 var ca = [new Buffer(credentials.ca_certificate_base64, 'base64')];
 var mongodb;
 
-
-MongoClient.connect("mongodb://admin:UFAPABGBLZRJXKKA@sl-us-dal-9-portal.5.dblayer.com:21245", {
+/*
+MongoClient.connect(credentials.uri, {
 		mongos: {
 			ssl: true,
 			sslValidate: true,
@@ -50,7 +50,7 @@ MongoClient.connect("mongodb://admin:UFAPABGBLZRJXKKA@sl-us-dal-9-portal.5.dblay
 		}
 	}
 );
-
+*/
 
 var mongoDbOptions = {
 	mongos: {
@@ -62,7 +62,7 @@ var mongoDbOptions = {
 	}
 };
 
-var mongooseClient = mongoose.connect("mongodb://admin:UFAPABGBLZRJXKKA@sl-us-dal-9-portal.5.dblayer.com:21245", mongoDbOptions);
+var mongooseClient = mongoose.connect(credentials.uri, mongoDbOptions);
 
 app.oauth = oauthserver({
 	model: require('./model.js'),
@@ -290,7 +290,7 @@ app.delete('/api/users/:id', app.oauth.authorise(), function (req, res) {
 			if (!user) {
 				res.status(500).send({success: false, message: 'Internal Server Error. UserID not found.'});
 			} else {
-				res.status(204).send({success: true, message: 'User ' + user.username + ' deleted.'});
+				res.status(200).json({success: true, message: 'User ' + user.username + ' deleted.'});
 			}
 		}, req.params.id);
 	});
