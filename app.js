@@ -579,7 +579,7 @@ app.get('/api/groups/:id/readings/:start*?,:end*?', app.oauth.authorise(), funct
 				if (!group) {
 					res.status(404).send({success: false, message: 'Not Found. GroupID not found.'});
 				} else {
-					readingModel.findReadingsByTime(function(err, readings) {
+					readingModel.findReadings(function(err, readings) {
 					if(err){
 						res.status(500).send({success: false, message: 'Internal Server Error. Failed to retrieve readings.'});
 						return console.error('Error: ' + err);
