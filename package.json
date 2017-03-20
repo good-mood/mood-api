@@ -15,7 +15,7 @@
 		"mongodb": "^2.2.9",
 		"assert":"^1.4.1",
 		"util":"^0.10.3",
-		"child_process":"*"
+		"cors":"*"
 	},
 	"repository": {},
 	"engines": {

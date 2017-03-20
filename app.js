@@ -7,7 +7,8 @@ var express = require('express'),
 	oauthserver = require('oauth2-server'),
 	mongoose = require('mongoose'),
 	moment = require('moment'),
-	cfenv = require('cfenv');
+	cfenv = require('cfenv'),
+	cors = require('cors');
 
 var	clientModel = require('./mongo/model/client'),
 	tokenModel = require('./mongo/model/token'),
@@ -19,6 +20,8 @@ var	clientModel = require('./mongo/model/client'),
 var	app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.options('*', cors());
+app.use(cors());
 
 const util = require('util');
 const assert = require('assert');
@@ -151,6 +154,12 @@ function createCriteria(id, params, query) {
 	console.log('GET criteria: ' + JSON.stringify(criteria));
 	return criteria;
 };
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.all('/api/tokens', app.oauth.grant());
 
